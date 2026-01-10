@@ -2,23 +2,36 @@ package com.example.billmanager;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.billmanager.data.database.AppDatabase;
+import com.example.billmanager.data.entity.Customer;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private AppDatabase db;
+    private RecyclerView rvCustomers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        db = AppDatabase.getInstance(this);
+
+        rvCustomers = findViewById(R.id.rvCustomers);
+        rvCustomers.setLayoutManager(new LinearLayoutManager(this));
+
+        List<Customer> customers =
+                db.customerDao().searchCustomer("");
+
+        CustomerAdapter adapter =
+                new CustomerAdapter(customers);
+
+        rvCustomers.setAdapter(adapter);
     }
 }
