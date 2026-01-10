@@ -1,6 +1,11 @@
 package com.example.billmanager;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppDatabase db;
     private RecyclerView rvCustomers;
+    private CustomerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +32,45 @@ public class MainActivity extends AppCompatActivity {
         rvCustomers = findViewById(R.id.rvCustomers);
         rvCustomers.setLayoutManager(new LinearLayoutManager(this));
 
+        loadCustomers();
+
+        Button btnAdd = findViewById(R.id.btnAddCustomer);
+        btnAdd.setOnClickListener(v -> showAddCustomerDialog());
+    }
+
+    private void loadCustomers() {
         List<Customer> customers =
                 db.customerDao().searchCustomer("");
 
-        CustomerAdapter adapter =
-                new CustomerAdapter(customers);
-
+        adapter = new CustomerAdapter(customers);
         rvCustomers.setAdapter(adapter);
+    }
+
+    private void showAddCustomerDialog() {
+
+        View view = LayoutInflater.from(this)
+                .inflate(R.layout.dialog_add_customer, null);
+
+        EditText etName = view.findViewById(R.id.etName);
+        EditText etPhone = view.findViewById(R.id.etPhone);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Add Customer")
+                .setView(view)
+                .setPositiveButton("Save", (dialog, which) -> {
+
+                    String name = etName.getText().toString();
+                    String phone = etPhone.getText().toString();
+
+                    if (!name.isEmpty()) {
+                        db.customerDao()
+                                .insertCustomer(
+                                        new Customer(name, phone)
+                                );
+                        loadCustomers();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }
