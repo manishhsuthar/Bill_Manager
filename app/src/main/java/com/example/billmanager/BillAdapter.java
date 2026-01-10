@@ -1,5 +1,7 @@
 package com.example.billmanager;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +39,27 @@ public class BillAdapter
             @NonNull BillViewHolder holder, int position) {
 
         Bill bill = bills.get(position);
+
         holder.tvDate.setText(bill.date);
         holder.tvAmount.setText("₹ " + bill.amount);
         holder.tvDesc.setText(bill.description);
+
+        // 👉 OPEN PDF ON CLICK
+        holder.itemView.setOnClickListener(v -> {
+            if (bill.pdfPath != null && !bill.pdfPath.isEmpty()) {
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(
+                        Uri.parse(bill.pdfPath),
+                        "application/pdf"
+                );
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                Intent chooser =
+                        Intent.createChooser(intent, "Open PDF");
+                v.getContext().startActivity(chooser);
+            }
+        });
     }
 
     @Override
