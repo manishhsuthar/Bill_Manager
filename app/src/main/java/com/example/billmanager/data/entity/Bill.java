@@ -23,10 +23,15 @@ public class Bill {
     public double amount;
     public String description;
 
-    public Bill(int customerId, String date, double amount, String description) {
+    // NEW
+    public String pdfPath;
+
+    public Bill(int customerId, String date, double amount,
+                String description, String pdfPath) {
         this.customerId = customerId;
         this.date = date;
         this.amount = amount;
         this.description = description;
+        this.pdfPath = pdfPath;
     }
 }

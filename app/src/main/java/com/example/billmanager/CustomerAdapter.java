@@ -1,5 +1,6 @@
 package com.example.billmanager;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +38,19 @@ public class CustomerAdapter
             @NonNull CustomerViewHolder holder, int position) {
 
         Customer customer = customers.get(position);
+
         holder.tvName.setText(customer.name);
         holder.tvPhone.setText(customer.phone);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    v.getContext(),
+                    BillsActivity.class
+            );
+            intent.putExtra("customerId", customer.id);
+            intent.putExtra("customerName", customer.name);
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

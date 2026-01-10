@@ -13,7 +13,7 @@ import com.example.billmanager.data.entity.Customer;
 
 @Database(
         entities = {Customer.class, Bill.class},
-        version = 1
+        version = 2
 )
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -29,6 +29,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             AppDatabase.class,
                             "bill_database"
                     )
+                    .fallbackToDestructiveMigration()
                     .allowMainThreadQueries() // OK for learning
                     .build();
         }
