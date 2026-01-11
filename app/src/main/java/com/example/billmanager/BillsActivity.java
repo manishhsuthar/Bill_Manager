@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.example.billmanager.data.database.AppDatabase;
 import com.example.billmanager.data.entity.Bill;
@@ -36,6 +37,11 @@ public class BillsActivity extends AppCompatActivity {
         customerId = getIntent().getIntExtra("customerId", -1);
         String customerName = getIntent().getStringExtra("customerName");
 
+        if (customerId == -1) {
+            finish(); // close activity safely
+            return;
+        };
+
         TextView tvCustomerName = findViewById(R.id.tvCustomerName);
         tvCustomerName.setText(customerName);
 
@@ -46,11 +52,13 @@ public class BillsActivity extends AppCompatActivity {
 
         loadBills();
 
-        Button btnAddBill = findViewById(R.id.btnAddBill);
+        FloatingActionButton btnAddBill = findViewById(R.id.btnAddBill);
         btnAddBill.setOnClickListener(v -> showAddBillDialog());
     }
 
     private void loadBills() {
+        if (customerId == -1) return;
+
         List<Bill> bills = db.billDao().getBillsByCustomer(customerId);
         rvBills.setAdapter(new BillAdapter(bills));
     }
@@ -85,7 +93,7 @@ public class BillsActivity extends AppCompatActivity {
                                         date,
                                         amount,
                                         desc,
-                                        selectedPdfPath
+                                        selectedPdfPath == null ? "" : selectedPdfPath
                                 )
                         );
                         loadBills();

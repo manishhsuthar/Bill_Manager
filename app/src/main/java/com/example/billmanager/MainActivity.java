@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
 
         loadCustomers();
 
-        Button btnAdd = findViewById(R.id.btnAddCustomer);
-        btnAdd.setOnClickListener(v -> showAddCustomerDialog());
+
+        FloatingActionButton btnAddCustomer = findViewById(R.id.btnAddCustomer);
+        btnAddCustomer.setOnClickListener(v -> showAddCustomerDialog());
+
     }
 
     private void loadCustomers() {

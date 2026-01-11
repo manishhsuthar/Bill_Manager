@@ -55,5 +55,6 @@ dependencies {
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-livedata:2.8.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.4")
+    implementation("com.google.android.material:material:1.12.0")
 }
 

@@ -1,5 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- Primary Brand -->
+    <color name="colorPrimary">#2563EB</color>   <!-- Blue -->
+    <color name="colorPrimaryDark">#1E40AF</color>
+    <color name="colorAccent">#22C55E</color>    <!-- Green -->
+
+    <!-- Backgrounds -->
+    <color name="bgMain">#F8FAFC</color>
+    <color name="cardBg">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="textPrimary">#0F172A</color>
+    <color name="textSecondary">#475569</color>
+
+    <!-- Utility -->
+    <color name="divider">#E2E8F0</color>
+
 </resources>
