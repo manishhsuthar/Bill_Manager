@@ -14,6 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import android.widget.Toast;
+import com.example.billmanager.drive.DriveServiceHelper;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 
 import com.example.billmanager.data.database.AppDatabase;
 import com.example.billmanager.data.entity.Bill;
@@ -57,11 +65,16 @@ public class BillsActivity extends AppCompatActivity {
     }
 
     private void loadBills() {
-        if (customerId == -1) return;
+        new Thread(() -> {
+            List<Bill> bills =
+                    db.billDao().getBillsByCustomer(customerId);
 
-        List<Bill> bills = db.billDao().getBillsByCustomer(customerId);
-        rvBills.setAdapter(new BillAdapter(bills));
+            runOnUiThread(() -> {
+                rvBills.setAdapter(new BillAdapter(bills));
+            });
+        }).start();
     }
+
 
     private void showAddBillDialog() {
 
@@ -80,25 +93,33 @@ public class BillsActivity extends AppCompatActivity {
                 .setView(view)
                 .setPositiveButton("Save", (dialog, which) -> {
 
-                    String date = etDate.getText().toString();
-                    String amountStr = etAmount.getText().toString();
-                    String desc = etDesc.getText().toString();
+                    String date = new SimpleDateFormat(
+                            "dd-MM-yyyy",
+                            Locale.getDefault()
+                    ).format(new Date());
+                    double amount = Double.parseDouble(etAmount.getText().toString());
+                    String description = etDesc.getText().toString();
 
-                    if (!date.isEmpty() && !amountStr.isEmpty()) {
-                        double amount = Double.parseDouble(amountStr);
 
-                        db.billDao().insertBill(
-                                new Bill(
-                                        customerId,
-                                        date,
-                                        amount,
-                                        desc,
-                                        selectedPdfPath == null ? "" : selectedPdfPath
-                                )
-                        );
-                        loadBills();
-                    }
+
+                    Bill bill = new Bill(
+                            customerId,
+                            date,
+                            amount,
+                            description,
+                            pdfUri.toString()
+                    );
+
+                    new Thread(() -> {
+                        db.billDao().insertBill(bill);
+
+                        runOnUiThread(this::loadBills);
+
+                        uploadBillToDrive(pdfUri, customerName);
+
+                    }).start();
                 })
+
                 .setNegativeButton("Cancel", null)
                 .show();
     }
@@ -126,5 +147,51 @@ public class BillsActivity extends AppCompatActivity {
             selectedPdfPath = uri.toString();
         }
     }
+    private void uploadBillToDrive(Uri pdfUri, String customerName) {
+        GoogleSignInAccount account =
+                GoogleSignIn.getLastSignedInAccount(this);
+
+        if (account == null) {
+            Toast.makeText(this, "Google account not found", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                DriveServiceHelper driveHelper =
+                        new DriveServiceHelper(this, account);
+
+                String rootFolderId =
+                        driveHelper.getOrCreateFolder("BillManager", null);
+
+                String customerFolderId =
+                        driveHelper.getOrCreateFolder(customerName, rootFolderId);
+
+                String fileId =
+                        driveHelper.uploadPdf(
+                                pdfUri,
+                                "bill_" + System.currentTimeMillis() + ".pdf",
+                                customerFolderId
+                        );
+
+                runOnUiThread(() ->
+                        Toast.makeText(this,
+                                "Uploaded to Drive",
+                                Toast.LENGTH_LONG).show()
+                );
+
+                // TODO: save fileId in Room DB with Bill
+
+            } catch (Exception e) {
+                runOnUiThread(() ->
+                        Toast.makeText(this,
+                                "Upload failed: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show()
+                );
+            }
+        }).start();
+    }
+
+
 
 }

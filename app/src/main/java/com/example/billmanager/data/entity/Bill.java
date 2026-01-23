@@ -22,6 +22,8 @@ public class Bill {
     public String date;
     public double amount;
     public String description;
+    public String driveFileId;
+
 
     // NEW
     public String pdfPath;

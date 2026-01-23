@@ -61,12 +61,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadCustomers() {
-        List<Customer> customers =
-                db.customerDao().searchCustomer("");
+        new Thread(() -> {
+            List<Customer> customers =
+                    db.customerDao().searchCustomer("");
 
-        adapter = new CustomerAdapter(customers);
-        rvCustomers.setAdapter(adapter);
+            runOnUiThread(() -> {
+                adapter = new CustomerAdapter(customers);
+                rvCustomers.setAdapter(adapter);
+            });
+        }).start();
     }
+
 
     private void showAddCustomerDialog() {
         View view = LayoutInflater.from(this)
@@ -79,15 +84,23 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle("Add Customer")
                 .setView(view)
                 .setPositiveButton("Save", (dialog, which) -> {
+
                     String name = etName.getText().toString();
                     String phone = etPhone.getText().toString();
 
                     if (!name.isEmpty()) {
-                        db.customerDao()
-                                .insertCustomer(new Customer(name, phone));
-                        loadCustomers();
+
+                        new Thread(() -> {
+                            db.customerDao()
+                                    .insertCustomer(
+                                            new Customer(name, phone)
+                                    );
+
+                            runOnUiThread(this::loadCustomers);
+                        }).start();
                     }
                 })
+
                 .setNegativeButton("Cancel", null)
                 .show();
     }
