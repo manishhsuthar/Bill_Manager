@@ -1,5 +1,6 @@
 package com.example.billmanager;
 
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,6 +22,8 @@ import com.example.billmanager.drive.DriveServiceHelper;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import android.net.Uri;
+
 
 
 import com.example.billmanager.data.database.AppDatabase;
@@ -29,6 +32,8 @@ import com.example.billmanager.data.entity.Bill;
 import java.util.List;
 
 public class BillsActivity extends AppCompatActivity {
+
+    private Uri selectedPdfUri;
 
     private static final int PICK_PDF = 101;
 
@@ -93,21 +98,22 @@ public class BillsActivity extends AppCompatActivity {
                 .setView(view)
                 .setPositiveButton("Save", (dialog, which) -> {
 
+                    if (selectedPdfUri == null) {
+                        Toast.makeText(this, "Please select a PDF", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     String date = new SimpleDateFormat(
                             "dd-MM-yyyy",
                             Locale.getDefault()
                     ).format(new Date());
-                    double amount = Double.parseDouble(etAmount.getText().toString());
-                    String description = etDesc.getText().toString();
-
-
 
                     Bill bill = new Bill(
                             customerId,
                             date,
                             amount,
                             description,
-                            pdfUri.toString()
+                            selectedPdfUri.toString()
                     );
 
                     new Thread(() -> {
@@ -115,10 +121,11 @@ public class BillsActivity extends AppCompatActivity {
 
                         runOnUiThread(this::loadBills);
 
-                        uploadBillToDrive(pdfUri, customerName);
+                        uploadBillToDrive(selectedPdfUri, customerName);
 
                     }).start();
                 })
+
 
                 .setNegativeButton("Cancel", null)
                 .show();
@@ -135,18 +142,11 @@ public class BillsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_PDF && resultCode == RESULT_OK && data != null) {
-            Uri uri = data.getData();
-
-            // Persist permission (CRITICAL)
-            getContentResolver().takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-            );
-
-            selectedPdfPath = uri.toString();
+        if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null) {
+            selectedPdfUri = data.getData();
         }
     }
+
     private void uploadBillToDrive(Uri pdfUri, String customerName) {
         GoogleSignInAccount account =
                 GoogleSignIn.getLastSignedInAccount(this);
