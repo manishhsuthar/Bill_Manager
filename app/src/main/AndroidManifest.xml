@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.READ_MEDIA_DOCUMENTS"/>
+
+    <uses-permission android:name="android.permission.READ_MEDIA_DOCUMENTS" />
 
     <application
         android:allowBackup="true"
@@ -13,17 +14,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BillManager">
         <activity
-            android:name=".BillsActivity"
+            android:name=".ProfileActivity"
             android:exported="false" />
+        <!-- LOGIN SCREEN (APP ENTRY POINT) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- MAIN APP -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" /> <!-- BILLS SCREEN -->
+        <activity
+            android:name=".BillsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

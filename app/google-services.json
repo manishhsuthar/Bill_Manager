@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "549225943842",
+    "project_id": "billmanager-9d69f",
+    "storage_bucket": "billmanager-9d69f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549225943842:android:977ad9cf758dfab3dacb7b",
+        "android_client_info": {
+          "package_name": "com.example.billmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549225943842-ckg8sjtc17biljme0vr9o0c3pbkln43d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.billmanager",
+            "certificate_hash": "2bcb09c83b63f6e692300a300b2d50f40ec5661d"
+          }
+        },
+        {
+          "client_id": "549225943842-99nhdt3bbmo3kt3kahoravbpe1mnrc7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAz2YlBFjPJpzA845X-Df003QJfhdRRgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549225943842-99nhdt3bbmo3kt3kahoravbpe1mnrc7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,24 +8,26 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:text="Customers"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/textPrimary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <!-- TOOLBAR MUST BE FIRST -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:title="Customers"
+            app:titleTextColor="@android:color/white"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:elevation="6dp"/>
 
+        <!-- SEARCH -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Search customer"
-            android:layout_marginTop="8dp"
-            >
+            android:layout_margin="16dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etSearch"
@@ -33,13 +35,16 @@
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- CUSTOMER LIST -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCustomers"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
     </LinearLayout>
 
+    <!-- ADD CUSTOMER FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddCustomer"
         android:layout_width="wrap_content"

@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">bill manager</string>
+
+    <string name="app_name">Bill Manager</string>
+
+    <!-- This will be auto-filled by Firebase later -->
+    <string name="default_web_client_id">TEMP_VALUE</string>
+
 </resources>
