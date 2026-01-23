@@ -35,6 +35,10 @@ public class BillsActivity extends AppCompatActivity {
 
     private Uri selectedPdfUri;
 
+    private static final int PICK_PDF_REQUEST = 101;
+
+    private String customerName;
+
     private static final int PICK_PDF = 101;
 
     private AppDatabase db;
@@ -48,7 +52,7 @@ public class BillsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bills);
 
         customerId = getIntent().getIntExtra("customerId", -1);
-        String customerName = getIntent().getStringExtra("customerName");
+        customerName = getIntent().getStringExtra("customerName");
 
         if (customerId == -1) {
             finish(); // close activity safely
@@ -88,7 +92,7 @@ public class BillsActivity extends AppCompatActivity {
 
         EditText etDate = view.findViewById(R.id.etDate);
         EditText etAmount = view.findViewById(R.id.etAmount);
-        EditText etDesc = view.findViewById(R.id.etDesc);
+        EditText etDescription = view.findViewById(R.id.etDescription);
         Button btnSelectPdf = view.findViewById(R.id.btnSelectPdf);
 
         btnSelectPdf.setOnClickListener(v -> openPdfPicker());
@@ -100,6 +104,19 @@ public class BillsActivity extends AppCompatActivity {
 
                     if (selectedPdfUri == null) {
                         Toast.makeText(this, "Please select a PDF", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    String amountStr = etAmount.getText().toString().trim();
+                    if (amountStr.isEmpty()) {
+                        Toast.makeText(this, "Enter amount", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    double amount = Double.parseDouble(amountStr);
+
+                    String description = etDescription.getText().toString().trim();
+                    if (description.isEmpty()) {
+                        Toast.makeText(this, "Enter description", Toast.LENGTH_LONG).show();
                         return;
                     }
 
@@ -118,13 +135,12 @@ public class BillsActivity extends AppCompatActivity {
 
                     new Thread(() -> {
                         db.billDao().insertBill(bill);
-
                         runOnUiThread(this::loadBills);
-
                         uploadBillToDrive(selectedPdfUri, customerName);
-
                     }).start();
                 })
+
+
 
 
                 .setNegativeButton("Cancel", null)
