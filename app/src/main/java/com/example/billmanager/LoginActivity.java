@@ -3,10 +3,10 @@ package com.example.billmanager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+import com.google.android.gms.common.api.Scope;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -38,12 +38,15 @@ public class LoginActivity extends AppCompatActivity {
             finish();
             return;
         }
-
         GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.default_web_client_id))
                         .requestEmail()
+                        .requestScopes(
+                                new Scope("https://www.googleapis.com/auth/drive.file")
+                        )
                         .build();
+
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -52,9 +55,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn() {
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        googleSignInClient.signOut().addOnCompleteListener(task -> {
+            Intent signInIntent = googleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        });
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
@@ -66,21 +72,23 @@ public class LoginActivity extends AppCompatActivity {
                     GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account =
-                        task.getResult(ApiException.class);
+                        GoogleSignIn.getSignedInAccountFromIntent(data)
+                                .getResult(ApiException.class);
 
-                if (account != null) {
+                if (account != null && account.getIdToken() != null) {
                     firebaseAuthWithGoogle(account.getIdToken());
                 } else {
                     Toast.makeText(this,
-                            "Google account is null",
-                            Toast.LENGTH_SHORT).show();
+                            "Google Sign-In failed: missing ID token",
+                            Toast.LENGTH_LONG).show();
                 }
 
             } catch (ApiException e) {
                 Toast.makeText(this,
-                        "Google sign-in failed: " + e.getStatusCode(),
-                        Toast.LENGTH_SHORT).show();
+                        "Google Sign-In failed: " + e.getStatusCode(),
+                        Toast.LENGTH_LONG).show();
             }
+
         }
     }
 
